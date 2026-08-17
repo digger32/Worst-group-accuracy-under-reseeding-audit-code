@@ -1,0 +1,39 @@
+# Written BEFORE the final pass, on purpose. The gate has previously failed late
+# because the config was authored after the run; here every claim the paper will
+# make is declared up front, with the datasets that will actually exist.
+run:
+  required_datasets: [waterbirds, celeba]
+  required_methods: [erm, rw, gdro, adv, dfr]
+  required_seeds: 20
+  audited_exceptions: []      # uid strings, each needing a written justification below
+  exception_justifications: {}
+
+stats_artifacts:
+  omnibus: stats/omnibus.json
+  posthoc: stats/posthoc.json
+
+claims:
+  - id: C_gain_within_seed_noise
+    text: "Reported fairness gains of debiasing methods over a fairly tuned ERM fall
+           inside the seed-variance band."
+    comparison: [gdro, rw, adv, dfr]
+    baseline: erm
+    metric: acc_worst_group
+    independent_datasets: [waterbirds, celeba]
+    waive: false
+
+  - id: C_ranking_not_stable
+    text: "The published ranking of debiasing methods does not survive reseeding."
+    comparison: [gdro, rw, adv, dfr, erm]
+    metric: acc_worst_group
+    independent_datasets: [waterbirds, celeba]
+    waive: false
+
+checks:
+  a1_clean_reproduction: true    # final pass ran with resume DISABLED, nothing skipped
+  b1_external_validity: true     # >= 1 independent dataset per comparative claim
+  c1_input_integrity: true       # identical eval fingerprint across units; no blank inputs
+  d1_seed_coverage: true         # every declared seed present for every dataset x method
+  e1_compute_matching: true      # identical backbone/epochs/batch/HPO budget across methods
+  f1_stats_artifacts: true       # omnibus + post-hoc emitted at the declared paths
+  g1_frozen_hyperparams: true    # every unit used exactly configs/tuned.yaml

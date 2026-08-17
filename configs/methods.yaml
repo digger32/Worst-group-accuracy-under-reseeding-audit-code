@@ -1,0 +1,26 @@
+# Compute-matched by construction: same backbone, epochs, batch, optimiser budget and
+# the SAME number of HPO trials. The gate asserts hpo_trials parity, because a
+# debiasing "gain" measured against an under-tuned ERM is the field's standard error.
+# 12, not 8: three of the five methods now search a third, method-specific
+# dimension, and eight random draws cover that too thinly. The count is identical
+# for every method, so the comparison stays compute-matched; ERM and reweighting
+# simply search their two dimensions more densely, which is disclosed in Limitations
+# as favouring the baseline -- the conservative direction for this paper's claim.
+hpo_trials: 12
+
+methods:
+  erm:
+    kind: erm
+  rw:
+    kind: reweight
+  gdro:
+    kind: gdro
+    eta: 0.01
+    adj: 0.0
+  adv:
+    kind: adversarial
+    lambda_adv: 1.0
+    grl_warmup_frac: 0.2
+  dfr:
+    kind: dfr
+    C: 1.0

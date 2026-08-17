@@ -1,0 +1,16 @@
+# A5 — pinned. Install OFFLINE from the wheelhouse:
+#   pip install --no-index --find-links=$HOME/wheelhouse -r requirements.txt
+torch==2.5.1
+torchvision==0.20.1
+numpy==1.26.4
+scipy==1.14.1
+pandas==2.2.3
+scikit-learn==1.5.2
+pyyaml==6.0.2
+pillow==11.0.0
+pyarrow==17.0.0
+matplotlib==3.9.2
+tqdm==4.67.1
+wilds==2.0.0
+huggingface_hub==0.34.4
+datasets==3.6.0

@@ -1,0 +1,41 @@
+# A5 grid. unit = dataset x method x seed.
+seeds: 20
+image_size: 224          # canonical for both benchmarks; micro may lower it for CelebA
+batch_size: 64
+amp: bf16
+num_workers: 2           # 32 GB RAM: workers are the RAM multiplier, not the unit count
+prefetch_factor: 2
+persistent_workers: false
+
+datasets:
+  waterbirds:
+    source: wilds
+    n_groups: 4
+    epochs: 30
+    lr: 1.0e-3
+    weight_decay: 1.0e-4
+    backbone: resnet50
+    subsample: null
+  celeba:
+    source: hf
+    target_attr: Blond_Hair
+    spurious_attr: Male
+    n_groups: 4
+    epochs: 5
+    lr: 1.0e-4
+    weight_decay: 1.0e-4
+    backbone: resnet50
+    # NO CAP. An earlier version capped the majority groups at 8,000, which lifted
+    # the minority share from 0.85% to 5.46% and cut the imbalance from 51.6:1 to
+    # 5.8:1 -- i.e. it removed most of the spurious correlation the benchmark exists
+    # to create. Measured consequence at seed 0: ERM reached 0.628 worst-group
+    # accuracy, far above the 0.25-0.47 the literature reports, so the audit would
+    # have been run on a benchmark that is no longer CelebA. The full split costs
+    # ~16.7 min/unit (extrapolated from the measured 180 s), i.e. ~28 GPU-hours for
+    # the 100 CelebA units, which the budget allows.
+    subsample: null
+
+heavy_unit: {dataset: celeba, method: gdro, seed: 0}
+fast_unit: {dataset: waterbirds, method: erm, seed: 0}
+
+ram_budget_gb: 22.0
