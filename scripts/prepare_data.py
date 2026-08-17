@@ -3,13 +3,13 @@
 
 Four failure modes are designed out, each of which cost a real run.
 
-DECODING (V1/A2). The datasets library decoded images inside its own generator and
+DECODING. The datasets library decoded images inside its own generator and
 PIL stalled on one truncated file upstream of the safety wrapper; worse, a model
 could be scored on inputs it never received. Here nothing decodes images but
-a5.data.safe_decode, and a constant image counts as a failure because it is
+wgaudit.data.safe_decode, and a constant image counts as a failure because it is
 indistinguishable from no image at all.
 
-HOST MEMORY (25 Jul 2026). The previous version built a Python list holding the raw
+HOST MEMORY . The previous version built a Python list holding the raw
 bytes of every image before decoding any of them: on a PNG mirror that is 12-29 GB,
 and the host OOM killer took the process -- twice, silently, with tmux as collateral.
 Images are now streamed in small Arrow row batches, so resident memory is flat and
@@ -45,7 +45,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from a5 import data as D  # noqa: E402
+from wgaudit import data as D  # noqa: E402
 
 RAW = ROOT / "data" / "raw"
 SPLIT_CODE = {"train": 0, "val": 1, "test": 2}

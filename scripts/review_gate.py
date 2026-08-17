@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Review-proofing gate. Exit 0 = the numbers may be frozen; exit 1 = they may not.
 
-A1/B1 are the house minimum. C1, D1 and E1 are this paper's own failure modes: an
-audit whose whole claim is "the difference is seed noise" is destroyed by a silent
-input bug, by uneven seed coverage, or by methods that were not in fact compute-
-matched -- so the gate refuses those three as hard as it refuses a dirty rerun.
+Clean reproduction and external validity are the minimum. Input integrity, seed
+coverage and compute matching are this study's own failure modes: an audit whose
+claim concerns seed variance is destroyed by a silent input bug, by uneven seed
+coverage, or by methods that were not in fact compute-matched -- so the gate refuses
+those as hard as it refuses a dirty rerun.
 """
 from __future__ import annotations
 
@@ -34,56 +35,56 @@ def gate(outdir):
     exceptions = set(run.get("audited_exceptions") or [])
     fails, notes = [], []
 
-    # ---- A1: clean reproduction -------------------------------------------- #
+    # ---- clean-reproduction: clean reproduction -------------------------------------------- #
     if checks.get("a1_clean_reproduction"):
         if not meta.get("no_resume"):
-            fails.append("A1: run_meta.no_resume is false -- the final pass must run with resume DISABLED")
+            fails.append("clean-reproduction: run_meta.no_resume is false -- the final pass must run with resume DISABLED")
         skipped = [r["unit"] for r in manifest if r.get("status") == "skip"]
         if skipped:
-            fails.append(f"A1: {len(skipped)} unit(s) were skipped, e.g. {skipped[:3]}")
+            fails.append(f"clean-reproduction: {len(skipped)} unit(s) were skipped, e.g. {skipped[:3]}")
         bad = [r["unit"] for r in manifest
                if r.get("status") != "ok" and r["unit"] not in exceptions]
         if bad:
-            fails.append(f"A1: {len(bad)} unit(s) did not complete: {bad[:5]}")
+            fails.append(f"clean-reproduction: {len(bad)} unit(s) did not complete: {bad[:5]}")
         undocumented = [u for u in exceptions
                         if not (run.get("exception_justifications") or {}).get(u)]
         if undocumented:
-            fails.append(f"A1: audited exceptions without a written justification: {undocumented}")
+            fails.append(f"clean-reproduction: audited exceptions without a written justification: {undocumented}")
 
-    # ---- B1: external validity --------------------------------------------- #
+    # ---- external-validity: external validity --------------------------------------------- #
     present_ds = {u["dataset"] for u in units}
     if checks.get("b1_external_validity"):
         for c in cfg["claims"]:
             if c.get("waive"):
                 if not c.get("waiver_justification"):
-                    fails.append(f"B1: claim {c['id']} is waived without a justification")
+                    fails.append(f"external-validity: claim {c['id']} is waived without a justification")
                 else:
-                    notes.append(f"B1: claim {c['id']} waived -- {c['waiver_justification']}")
+                    notes.append(f"external-validity: claim {c['id']} waived -- {c['waiver_justification']}")
                 continue
             missing = [d for d in c["independent_datasets"] if d not in present_ds]
             if missing:
-                fails.append(f"B1: claim {c['id']} needs {missing}, absent from this run")
+                fails.append(f"external-validity: claim {c['id']} needs {missing}, absent from this run")
 
-    # ---- C1: input integrity ------------------------------------------------ #
+    # ---- input-integrity: input integrity ------------------------------------------------ #
     if checks.get("c1_input_integrity"):
         by_ds, tr_ds = defaultdict(set), defaultdict(set)
         for u in units:
             by_ds[u["dataset"]].add(u.get("eval_sha256"))
             tr_ds[u["dataset"]].add(u.get("train_sha256"))
             if not u.get("min_probe_std", 1) > 0:
-                fails.append(f"C1: {u['dataset']}/{u['method']}/seed{u['seed']} scored a "
+                fails.append(f"input-integrity: {u['dataset']}/{u['method']}/seed{u['seed']} scored a "
                              f"constant eval probe -- the model was not fed images")
         for ds, hs in by_ds.items():
             if len(hs) > 1:
-                fails.append(f"C1: {ds} has {len(hs)} distinct eval fingerprints -- "
+                fails.append(f"input-integrity: {ds} has {len(hs)} distinct eval fingerprints -- "
                              f"methods were evaluated on different pixels")
         for ds, hs in tr_ds.items():
             if len(hs) > 1:
-                fails.append(f"C1: {ds} has {len(hs)} distinct training fingerprints -- "
+                fails.append(f"input-integrity: {ds} has {len(hs)} distinct training fingerprints -- "
                              f"the training set must be identical across seeds and "
                              f"methods, or the seed-variance claim is unattributable")
 
-    # ---- D1: seed coverage -------------------------------------------------- #
+    # ---- seed-coverage: seed coverage -------------------------------------------------- #
     if checks.get("d1_seed_coverage"):
         seen = defaultdict(set)
         for u in units:
@@ -92,9 +93,9 @@ def gate(outdir):
             for m in run["required_methods"]:
                 got = seen.get((ds, m), set())
                 if len(got) < run["required_seeds"]:
-                    fails.append(f"D1: {ds}/{m} has {len(got)}/{run['required_seeds']} seeds")
+                    fails.append(f"seed-coverage: {ds}/{m} has {len(got)}/{run['required_seeds']} seeds")
 
-    # ---- E1: compute matching ----------------------------------------------- #
+    # ---- compute-matching: compute matching ----------------------------------------------- #
     if checks.get("e1_compute_matching"):
         by_ds = defaultdict(list)
         for u in units:
@@ -103,15 +104,15 @@ def gate(outdir):
             for field in ("backbone", "epochs", "batch_size", "hpo_trials"):
                 vals = {u.get(field) for u in us}
                 if len(vals) > 1:
-                    fails.append(f"E1: {ds} has non-matching {field} across methods: {vals} "
+                    fails.append(f"compute-matching: {ds} has non-matching {field} across methods: {vals} "
                                  f"-- a gain measured against an under-tuned baseline is not a gain")
         oom = [f"{u['dataset']}/{u['method']}/seed{u['seed']}" for u in units
                if u.get("oom_backoffs")]
         if oom:
-            fails.append(f"E1: {len(oom)} unit(s) hit an OOM backoff, so their effective "
+            fails.append(f"compute-matching: {len(oom)} unit(s) hit an OOM backoff, so their effective "
                          f"batch differed: {oom[:5]}")
 
-    # ---- G1: the run used the frozen hyperparameters ------------------------ #
+    # ---- frozen-hyperparams: the run used the frozen hyperparameters ------------------------ #
     if checks.get("g1_frozen_hyperparams", True):
         tuned_path = ROOT / "configs" / "tuned.yaml"
         tuned = yaml.safe_load(tuned_path.read_text()) if tuned_path.exists() else None
@@ -121,29 +122,29 @@ def gate(outdir):
         for (ds, m), us in sorted(by_pair.items()):
             seen = {json.dumps(u.get("hyperparams"), sort_keys=True) for u in us}
             if len(seen) > 1:
-                fails.append(f"G1: {ds}/{m} ran with {len(seen)} different "
+                fails.append(f"frozen-hyperparams: {ds}/{m} ran with {len(seen)} different "
                              f"hyperparameter sets across seeds")
             if tuned is None:
                 continue
             want = (tuned.get(ds) or {}).get(m)
             got = us[0].get("hyperparams")
             if want is None:
-                fails.append(f"G1: configs/tuned.yaml has no entry for {ds}/{m}")
+                fails.append(f"frozen-hyperparams: configs/tuned.yaml has no entry for {ds}/{m}")
             elif got is None:
-                fails.append(f"G1: {ds}/{m} units record no hyperparams -- rerun with "
+                fails.append(f"frozen-hyperparams: {ds}/{m} units record no hyperparams -- rerun with "
                              f"the current build")
             else:
                 diff = {k: (want[k], got.get(k)) for k in want
                         if abs(float(want[k]) - float(got.get(k, float("nan")))) > 1e-12}
                 if diff:
-                    fails.append(f"G1: {ds}/{m} ran with hyperparameters that differ "
+                    fails.append(f"frozen-hyperparams: {ds}/{m} ran with hyperparameters that differ "
                                  f"from configs/tuned.yaml: {diff}")
 
-    # ---- F1: stats artifacts ------------------------------------------------ #
+    # ---- stats-artifacts: stats artifacts ------------------------------------------------ #
     if checks.get("f1_stats_artifacts"):
         for name, rel in cfg["stats_artifacts"].items():
             if not (outdir / rel).exists():
-                fails.append(f"F1: missing stats artifact {name} at {rel}")
+                fails.append(f"stats-artifacts: missing stats artifact {name} at {rel}")
 
     print(f"[gate] {outdir} | units={len(units)} | no_resume={meta.get('no_resume')} "
           f"| config={meta.get('config_sha256')}")

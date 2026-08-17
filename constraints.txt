@@ -1,0 +1,9 @@
+# PIP_CONSTRAINT guard. Any later `pip install X` may NOT move these.
+# export PIP_CONSTRAINT=$PWD/constraints-wgaudit.txt   (put it in .venv/bin/activate)
+torch==2.5.1
+torchvision==0.20.1
+numpy==1.26.4
+scipy==1.14.1
+pandas==2.2.3
+scikit-learn==1.5.2
+pillow==11.0.0

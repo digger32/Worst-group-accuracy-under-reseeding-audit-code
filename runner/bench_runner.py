@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""A5 job-based runner. unit = dataset x method x seed, each in its OWN subprocess,
+"""Job-based runner. unit = dataset x method x seed, each in its OWN subprocess,
 so a hang, an OOM kill or a segfault costs one unit and never the batch.
 
 Beyond the house pattern (resume, per-unit hard timeout, atomic writes, manifest,
---no-resume for the final pass) this runner adds one thing the T2 experience made
+--no-resume for the final pass) this runner adds one thing experience made
 necessary: while each unit runs, a sampler watches host MemAvailable and records
 the LOW-WATER mark. On a 32 GB box that number, not arithmetic, decides whether
 the full grid is safe.
 
 Launch (always inside tmux):
-    tmux new -s a5
+    tmux new -s wgaudit
     bash runner/pipeline.sh microheavy
     # detach: Ctrl-b d
 """
@@ -227,7 +227,7 @@ def run_orchestrator(args):
 def run_worker(args):
     import yaml
 
-    from a5.train import run_unit
+    from wgaudit.train import run_unit
 
     cfg, mcfg = load_cfg()
     tuned_path = ROOT / "configs" / "tuned.yaml"

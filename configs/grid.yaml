@@ -1,4 +1,4 @@
-# A5 grid. unit = dataset x method x seed.
+# Experiment grid. unit = dataset x method x seed.
 seeds: 20
 image_size: 224          # canonical for both benchmarks; micro may lower it for CelebA
 batch_size: 64

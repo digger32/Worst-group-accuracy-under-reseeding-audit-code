@@ -5,7 +5,7 @@ microfast  -- the cheap representative unit per method. Answers "which path and 
               long", i.e. the classic timing slice. Extrapolation is read from
               MEASURED wall_s in the manifest, never from arithmetic.
 microheavy -- every method on the HEAVIEST dataset. Answers the question that broke
-              T2 on a 32 GB box: what is the peak resident memory of the worst unit,
+              on a 32 GB host: what is the peak resident memory of the worst unit,
               and how close did the host come to running out. `full` refuses to start
               until this slice exists and clears configs/grid.yaml:ram_budget_gb.
 """

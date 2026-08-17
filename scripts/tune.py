@@ -64,7 +64,7 @@ def resolution(dataset, grid):
     validation selection half. Score differences below this are not measurable."""
     import numpy as np
 
-    from a5 import data as D
+    from wgaudit import data as D
 
     _, meta, _ = D.load_prepared(dataset)
     va = D.split_indices(meta, "val")
@@ -93,7 +93,7 @@ def choose(trials, tol):
 
 
 def main():
-    from a5.train import run_unit
+    from wgaudit.train import run_unit
 
     grid = yaml.safe_load((ROOT / "configs" / "grid.yaml").read_text())
     mcfg = yaml.safe_load((ROOT / "configs" / "methods.yaml").read_text())

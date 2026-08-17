@@ -1,4 +1,4 @@
-# A5 — pinned. Install OFFLINE from the wheelhouse:
+# Pinned dependencies. Install OFFLINE from the wheelhouse:
 #   pip install --no-index --find-links=$HOME/wheelhouse -r requirements.txt
 torch==2.5.1
 torchvision==0.20.1

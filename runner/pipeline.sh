@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# A5 pipeline -- one command per stage, run from the PROJECT ROOT inside tmux:
-#   tmux new -s a5   ->   bash runner/pipeline.sh <stage>   ->   Ctrl-b d
+# Pipeline -- one command per stage, run from the PROJECT ROOT inside tmux:
+#   tmux new -s wgaudit   ->   bash runner/pipeline.sh <stage>   ->   Ctrl-b d
 #
 # Stages, in order:
 #   wheels      build ~/wheelhouse once WITH network (only time the net is needed)
@@ -71,8 +71,8 @@ case "$STAGE" in
         --methods erm --max-seeds 1 --timeout-s 900
     run $PY scripts/aggregate.py "$OUT"
     run $PY scripts/stats.py "$OUT" || true      # 1 unit: omnibus legitimately degenerate
-    run $PY scripts/review_gate.py "$OUT" || true # smoke is resume-mode: A1 FAIL is EXPECTED
-    echo "[smoke] done -- a gate FAIL on A1/B1 here is EXPECTED" | tee -a "$RAW" ;;
+    run $PY scripts/review_gate.py "$OUT" || true # smoke runs in resume mode: a gate FAIL is EXPECTED
+    echo "[smoke] done -- a gate FAIL here is EXPECTED" | tee -a "$RAW" ;;
 
   # ---- two micro slices; both measure, neither guesses -------------------- #
   microfast)

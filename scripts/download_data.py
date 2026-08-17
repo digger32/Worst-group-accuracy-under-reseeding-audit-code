@@ -19,7 +19,7 @@ RAW = ROOT / "data" / "raw"
 
 # CelebA mirrors, in priority order. All carry the 40 binary attributes, so both
 # Blond_Hair (target) and Male (spurious attribute) are present.
-# Probed on 25 Jul 2026. Ordered by how safely the official partition can be used.
+# Probed in an earlier run. Ordered by how safely the official partition can be used.
 CELEBA_HF = [
     ("flwrlabs/celeba", "40 attributes as columns + celeb_id; official splits "
                         "(train/valid/test = 162770/19867/19962)"),
