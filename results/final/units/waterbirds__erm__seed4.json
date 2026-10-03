@@ -1,0 +1,53 @@
+{
+  "dataset": "waterbirds",
+  "method": "erm",
+  "seed": 4,
+  "device": "cuda",
+  "backbone": "resnet50",
+  "epochs": 30,
+  "batch_size": 64,
+  "lr": 0.00523,
+  "hyperparams": {
+    "lr": 0.00523,
+    "weight_decay": 0.000169
+  },
+  "hpo_trials": 12,
+  "selection_rule": "val_worst_group_accuracy",
+  "metrics": {
+    "acc_mean": 0.8605453917846048,
+    "acc_worst_group": 0.6931464174454829,
+    "acc_per_group": [
+      0.9915742793791574,
+      0.7458980044345898,
+      0.6931464174454829,
+      0.9704049844236761
+    ],
+    "n_per_group": [
+      2255,
+      2255,
+      642,
+      642
+    ],
+    "eo_gap": 0.2772585669781932,
+    "acc_balanced_group": 0.8502559214207266
+  },
+  "val_worst_group": 0.7081545064377682,
+  "oom_backoffs": 0,
+  "peak_vram_gb": 2.97,
+  "peak_rss_gb": 1.398,
+  "wall_s": 341.4,
+  "n_val_selection": 598,
+  "n_val_dfr": 601,
+  "val_worst_group_base": 0.7081545064377682,
+  "eval_sha256": "cfb0d6d3c6bc4e5e8f542197e3910b266c71333d91adb01412faa09d3eb8540d",
+  "n_probe": 64,
+  "min_probe_std": 0.575697,
+  "train_sha256": "e300f719f6119c986b3d5d164ebd728a9dfc337d812582c016992a02b7451def",
+  "train_group_hist": [
+    3498,
+    184,
+    56,
+    1057
+  ],
+  "n_train": 4795
+}
