@@ -1,24 +1,31 @@
-# Worst-group accuracy under reseeding: audit code
+# Reproducible Gains, Irreproducible Rankings: audit code
 
-Code accompanying an anonymous submission under triple-blind review. Author,
-affiliation, funding and acknowledgement information is deliberately absent and will
-be restored in the camera-ready version.
+Code, frozen configuration and results for
+
+> S. Kurashkin, V. Tynchenko, A. Borodulin, V. Nelyub. *Reproducible Gains,
+> Irreproducible Rankings: A 200-Run Audit of Bias-Mitigation Methods.* Workshop on
+> Trustworthy Machine Learning for Fair, Private, Robust, and Explainable
+> Decision-Making, IEEE ICDM Workshops (ICDMW), 2026. To appear.
 
 ## What this does
 
-Re-trains five group-robustness methods --- empirical risk minimisation, group
-reweighting, group-DRO, adversarial debiasing and last-layer retraining --- over 20
-seeds on two benchmarks, under a protocol that matches backbone, epoch budget, batch
-size, model-selection rule and tuning budget across methods. 200 independent training
-runs in total.
+Re-trains five bias-mitigation methods for group robustness (empirical risk
+minimisation, group reweighting, group-DRO, adversarial debiasing and last-layer
+retraining) over 20 seeds on Waterbirds and CelebA, under a protocol that matches
+backbone, epoch budget, batch size, model-selection rule and tuning budget across
+methods: 200 training runs. Reproducibility is measured under reseeding of training,
+with the data split and the selected hyperparameters held fixed.
 
 ## Layout
 
 ```
-wgaudit/     data layer, training, metrics
-runner/      pipeline entry point and the job-based runner
-configs/     experiment grid, method definitions, release-gate declaration
-scripts/     acquisition, preparation, tuning, aggregation, statistics, figures
+wgaudit/          data layer, training, metrics
+runner/           pipeline entry point and the job-based runner
+configs/          grid, method definitions, release-gate declaration, frozen configuration
+scripts/          acquisition, preparation, tuning, aggregation, statistics, figures,
+                  and the targeted experiment on adversarial debiasing
+results/final/    the reported pass: per-run outputs, merged table, statistics
+results/advcfg/   the targeted experiment: declaration, report and run logs
 ```
 
 ## Environment
@@ -29,13 +36,7 @@ bash runner/pipeline.sh env         # offline install from the wheelhouse
 source .venv/bin/activate
 ```
 
-Dependencies are pinned in `requirements.txt`; `constraints.txt` is installed as a
-pip constraint file inside the environment so that a later install cannot move them.
-
 ## Reproducing the results
-
-One command per stage. Each prints what it produced and refuses to continue if a
-precondition fails.
 
 ```bash
 bash runner/pipeline.sh check       # confirm every data mirror is reachable
@@ -44,50 +45,43 @@ bash runner/pipeline.sh data        # download
 bash runner/pipeline.sh prep        # decode once into a checksummed corpus
 bash runner/pipeline.sh selftest    # prove the release gate separates clean from dirty
 bash runner/pipeline.sh smoke       # one unit end to end
-bash runner/pipeline.sh microfast   # cheapest unit per method: timing
-bash runner/pipeline.sh microheavy  # heaviest unit per method: memory ceiling
-bash runner/pipeline.sh tune        # 12 trials per (dataset, method), then frozen
-JOBS=2 bash runner/pipeline.sh final   # the reported pass
+JOBS=2 bash runner/pipeline.sh final   # the reported pass, about 60 GPU-hours
+bash runner/pipeline.sh advcfg      # targeted experiment, about 5 GPU-hours
 ```
 
-`final` runs on a fresh output directory with resume disabled, then aggregates,
-computes statistics and runs the release gate.
+`configs/tuned.yaml` is the frozen configuration of the reported pass; the `tune`
+stage skips every pair already present in it. `final` runs on a fresh output directory
+with resume disabled, then aggregates, computes statistics and runs the release gate;
+tables and figures are regenerated only if the gate passes.
 
-Expect roughly 60 GPU-hours for the reported pass on a single 80 GB device. The
-device is saturated by one unit, so raising `JOBS` buys little; the pilot measured
-1.03x throughput on the smaller benchmark and 1.27x on the larger at `JOBS=5`.
+## The targeted experiment on adversarial debiasing
 
-## Outputs
-
-| Artefact | Path |
-|---|---|
-| Per-unit results | `runs/<name>/*.json` |
-| Merged table | `runs/<name>/results.csv` |
-| Statistics | `runs/<name>/stats/{omnibus,posthoc}.json` |
-| Figures | `runs/<name>/figures/*.pdf` |
+`advcfg` trains the four next-best adversarial configurations of the CelebA tuning
+run on five seeds each. Before the first unit starts, `scripts/adv_config_stability.py
+prepare` writes `runs/advcfg/DECLARATION.json`: the question, the configurations, the
+statistic, the threshold and its rationale, the reading rule, its error rates, and the
+sentence to be printed for each possible outcome, with a digest. The report refuses to
+run if the declaration was edited, if any unit started before it was written, or if
+any unit used other hyperparameters or other inputs.
 
 ## What the release gate checks
 
-A run is refused unless: resume was disabled and no unit was skipped; every
-comparative claim has an independent dataset; all methods saw byte-identical
-evaluation inputs and an identical training set; every declared seed is present; the
-backbone, epochs, batch size and tuning budget match across methods; every unit used
-exactly the frozen hyperparameters; and the statistics artefacts exist.
-`scripts/gate_selftest.py` proves the gate exits 0 on a synthetic clean run and 1 on
-a dirty one, and runs as part of the smoke stage.
+A run is refused unless resume was disabled and no unit was skipped; every comparative
+claim has an independent dataset; all methods saw byte-identical evaluation inputs and
+an identical training set; every declared seed is present; the backbone, epochs, batch
+size and tuning budget match across methods; every unit used exactly the frozen
+hyperparameters; and the statistics files exist. `scripts/gate_selftest.py` proves the
+gate exits 0 on a synthetic clean run and 1 on a dirty one.
 
 ## Statistical procedure
 
 Paired comparisons use an exact enumerated sign-flip permutation test over all 2^20
-sign assignments. This was adopted after the signed-rank test proved
-version-dependent: its exact null assumes no ties among absolute paired differences,
-accuracies on a fixed test set produce such ties, and the library switches between
-the exact null and a tie-corrected approximation depending on its version. Library
-versions are recorded alongside the results.
+sign assignments, adopted after the signed-rank test proved version-dependent under
+ties. Orderings are compared with a tie-invariant definition, and pairwise decisions
+use the probability of outperforming with an exact binomial interval.
 
 ## Data
 
-Both benchmarks are public and are used under their stated terms; one of them is
-released for non-commercial research only and carries annotated protected
-attributes. Only aggregate group-level metrics are produced; no derived attribute
-predictions are included in this repository or its outputs.
+Both benchmarks are public and are used under their stated terms; CelebA is released
+for non-commercial research only and carries annotated protected attributes. Only
+aggregate group-level metrics are produced.
