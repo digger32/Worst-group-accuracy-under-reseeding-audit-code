@@ -29,7 +29,7 @@ export PYTHONPATH="$PWD:${PYTHONPATH:-}"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 PY=${PY:-python3}
 JOBS=${JOBS:-1}   # concurrent units on THIS host; take it from microheavy, never guess
-STAGE="${1:?usage: pipeline.sh <wheels|env|check|probe|data|prep|selftest|smoke|microfast|microheavy|tune|pilot|triage|full|final|stats|gate>}"
+STAGE="${1:?usage: pipeline.sh <wheels|env|check|probe|data|prep|selftest|smoke|microfast|microheavy|tune|pilot|triage|full|final|advcfg|advcfg-report|stats|gate>}"
 mkdir -p logs
 STAMP=$(date -u +%Y%m%dT%H%M%SZ)
 RAW="logs/${STAGE}_${STAMP}.log"
@@ -115,6 +115,29 @@ case "$STAGE" in
     else
       echo "[final] GATE FAILED on $OUT -- tables NOT regenerated, numbers NOT freezable" | tee -a "$RAW"
     fi ;;
+
+  # ---- targeted experiment for the camera-ready: adversarial configuration stability
+  # Four configurations x five seeds on CelebA. Two streams of one unit each keep
+  # exactly two units on the device, which packs the 20 units better than JOBS=2
+  # inside four separate invocations. The declaration is written BEFORE any run.
+  advcfg)
+    FIN=${FINAL:-$(ls -d runs/final_* 2>/dev/null | tail -1)}
+    [ -n "$FIN" ] || { echo "[advcfg] no runs/final_* found; set FINAL=..."; exit 1; }
+    run $PY scripts/adv_config_stability.py prepare || exit 1
+    stream() {
+      for T in "$@"; do
+        $PY runner/bench_runner.py --outdir runs/advcfg/$T --datasets celeba --methods adv \
+            --max-seeds 5 --tuned runs/advcfg/$T/tuned.yaml --no-resume --timeout-s 7200 --jobs 1
+      done
+    }
+    stream t3 t4 > "logs/advcfg_streamA_${STAMP}.log" 2>&1 &
+    stream t6 t2 > "logs/advcfg_streamB_${STAMP}.log" 2>&1 &
+    echo "[advcfg] two streams started; logs/advcfg_stream{A,B}_${STAMP}.log" | tee -a "$RAW"
+    wait
+    grep -h "^\[runner\] done\|FAIL\|TIMEOUT" logs/advcfg_stream*_${STAMP}.log | tee -a "$RAW"
+    run $PY scripts/adv_config_stability.py report --final "$FIN" ;;
+  advcfg-report)
+    run $PY scripts/adv_config_stability.py report --final "${FINAL:-$(ls -d runs/final_* | tail -1)}" ;;
 
   stats) chain "${OUT:?set OUT=runs/...}" ;;
   gate)  run $PY scripts/review_gate.py "${OUT:?set OUT=runs/...}" ;;

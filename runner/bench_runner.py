@@ -126,6 +126,10 @@ def run_orchestrator(args):
         "seeds": sorted({s for _, _, s in units}),
         "hpo_trials": mcfg["hpo_trials"],
         "host_mem_available_gb_at_start": mem_available_gb(),
+        "tuned_file": str(args.tuned) if args.tuned else "configs/tuned.yaml",
+        "tuned_sha256": hashlib.sha256(Path(args.tuned or ROOT / "configs" / "tuned.yaml")
+                                       .read_bytes()).hexdigest()[:16]
+                        if Path(args.tuned or ROOT / "configs" / "tuned.yaml").exists() else None,
     }, indent=2))
 
     print(f"[runner] {len(units)} units | outdir={outdir} | jobs={jobs} "
@@ -192,7 +196,8 @@ def run_orchestrator(args):
             proc = subprocess.Popen(
                 [sys.executable, os.path.abspath(__file__), "--worker",
                  "--dataset", ds, "--method", m, "--seed", str(s),
-                 "--outdir", str(outdir)],
+                 "--outdir", str(outdir)] + (["--tuned", str(Path(args.tuned).resolve())]
+                                             if args.tuned else []),
                 stdout=lf, stderr=subprocess.STDOUT,
                 env=dict(os.environ, **WORKER_ENV), start_new_session=True)
             active.append((ds, m, s, proc, lf, time.time()))
@@ -230,7 +235,7 @@ def run_worker(args):
     from wgaudit.train import run_unit
 
     cfg, mcfg = load_cfg()
-    tuned_path = ROOT / "configs" / "tuned.yaml"
+    tuned_path = Path(args.tuned) if args.tuned else ROOT / "configs" / "tuned.yaml"
     tuned = yaml.safe_load(tuned_path.read_text()) if tuned_path.exists() else None
     run_unit(args.dataset, args.method, args.seed, args.outdir, cfg, mcfg, tuned)
 
@@ -248,6 +253,9 @@ def build_argparser():
     ap.add_argument("--jobs", type=int, default=1,
                     help="concurrent units on THIS host; set from microheavy's measured RSS")
     ap.add_argument("--no-resume", dest="no_resume", action="store_true")
+    ap.add_argument("--tuned", default="",
+                    help="frozen-configuration file; default configs/tuned.yaml. Used by "
+                         "targeted experiments that must not touch the frozen file.")
     ap.add_argument("--dataset"); ap.add_argument("--method")
     ap.add_argument("--seed", type=int)
     return ap
