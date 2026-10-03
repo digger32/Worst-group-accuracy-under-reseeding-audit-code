@@ -1,0 +1,30 @@
+{
+  "test": "friedman",
+  "chi2": 121.48989898989896,
+  "p": 2.5668770709058883e-25,
+  "n_blocks": 40,
+  "k_methods": 5,
+  "mean_ranks": {
+    "adv": 4.3125,
+    "dfr": 1.8625,
+    "erm": 4.65,
+    "gdro": 2.325,
+    "rw": 1.85
+  },
+  "nemenyi_cd_0.05": 0.9644138775946558,
+  "pairs_beyond_cd": [
+    "adv vs dfr",
+    "adv vs gdro",
+    "adv vs rw",
+    "dfr vs erm",
+    "erm vs gdro",
+    "erm vs rw"
+  ],
+  "environment": {
+    "python": "3.12.3",
+    "numpy": "1.26.4",
+    "scipy": "1.14.1",
+    "pandas": "2.2.3"
+  },
+  "paired_test": "exact enumerated sign-flip permutation test; Wilcoxon is recorded only as a reference because its exact null is invalid under ties in |d|"
+}

@@ -1,0 +1,220 @@
+{
+  "per_dataset": {
+    "celeba": {
+      "methods": {
+        "adv": {
+          "mean": 0.45465863009658636,
+          "sd": 0.1410379228579067,
+          "ci95": [
+            0.39410259068790093,
+            0.5149191274054412
+          ],
+          "delta_vs_erm": -0.017285814347858152,
+          "delta_ci95": [
+            -0.08313960775639608,
+            0.04521418565214186
+          ],
+          "perm_p": 0.6209831237792969,
+          "perm_method": "exact_enumeration",
+          "wilcoxon_p_approx_reference": 0.6142368188613654,
+          "n_ties_in_abs_diff": 1,
+          "seeds_for_80pct_power": 605,
+          "n_seeds": 20,
+          "perm_p_holm": 0.6209831237792969,
+          "significant_holm_0.05": false
+        },
+        "dfr": {
+          "mean": 0.8527765716728795,
+          "sd": 0.026143859873292548,
+          "ci95": [
+            0.8414985810409602,
+            0.864058720457073
+          ],
+          "delta_vs_erm": 0.380832127228435,
+          "delta_ci95": [
+            0.3615219211943187,
+            0.3998324363162875
+          ],
+          "perm_p": 1.9073486328125e-06,
+          "perm_method": "exact_enumeration",
+          "wilcoxon_p_approx_reference": 8.857457687863547e-05,
+          "n_ties_in_abs_diff": 0,
+          "seeds_for_80pct_power": 2,
+          "n_seeds": 20,
+          "perm_p_holm": 7.62939453125e-06,
+          "significant_holm_0.05": true
+        },
+        "gdro": {
+          "mean": 0.8670219446435276,
+          "sd": 0.02549437830242804,
+          "ci95": [
+            0.8558317257374605,
+            0.877862789808084
+          ],
+          "delta_vs_erm": 0.39507750019908305,
+          "delta_ci95": [
+            0.375,
+            0.41598851788334873
+          ],
+          "perm_p": 1.9073486328125e-06,
+          "perm_method": "exact_enumeration",
+          "wilcoxon_p_approx_reference": 8.819870204194453e-05,
+          "n_ties_in_abs_diff": 3,
+          "seeds_for_80pct_power": 2,
+          "n_seeds": 20,
+          "perm_p_holm": 7.62939453125e-06,
+          "significant_holm_0.05": true
+        },
+        "rw": {
+          "mean": 0.8899911550231506,
+          "sd": 0.023391492788863037,
+          "ci95": [
+            0.8791274920935577,
+            0.8992452675107789
+          ],
+          "delta_vs_erm": 0.4180467105787061,
+          "delta_ci95": [
+            0.39728146365880573,
+            0.4393767334448199
+          ],
+          "perm_p": 1.9073486328125e-06,
+          "perm_method": "exact_enumeration",
+          "wilcoxon_p_approx_reference": 8.832385863081277e-05,
+          "n_ties_in_abs_diff": 2,
+          "seeds_for_80pct_power": 2,
+          "n_seeds": 20,
+          "perm_p_holm": 7.62939453125e-06,
+          "significant_holm_0.05": true
+        },
+        "erm": {
+          "mean": 0.4719444444444444,
+          "sd": 0.04350151050830561,
+          "ci95": [
+            0.45361111111111113,
+            0.4905555555555555
+          ],
+          "n_seeds": 20
+        }
+      },
+      "ranking": {
+        "full_sample_order": [
+          "rw",
+          "gdro",
+          "dfr",
+          "erm",
+          "adv"
+        ],
+        "exact_order_survival": 0.6988,
+        "winner_survival": 0.9974
+      }
+    },
+    "waterbirds": {
+      "methods": {
+        "adv": {
+          "mean": 0.7777889563517555,
+          "sd": 0.02969949020623742,
+          "ci95": [
+            0.764648887726133,
+            0.7898753894080996
+          ],
+          "delta_vs_erm": 0.056591548031028324,
+          "delta_ci95": [
+            0.040573993582968974,
+            0.07336628537483336
+          ],
+          "perm_p": 7.62939453125e-06,
+          "perm_method": "exact_enumeration",
+          "wilcoxon_p_approx_reference": 0.00011126928015754344,
+          "n_ties_in_abs_diff": 2,
+          "seeds_for_80pct_power": 4,
+          "n_seeds": 20,
+          "perm_p_holm": 7.62939453125e-06,
+          "significant_holm_0.05": true
+        },
+        "dfr": {
+          "mean": 0.8870616698095614,
+          "sd": 0.01457687888729732,
+          "ci95": [
+            0.8806641022718639,
+            0.8929779565658869
+          ],
+          "delta_vs_erm": 0.16586426148883412,
+          "delta_ci95": [
+            0.15499305627508272,
+            0.1768502289823239
+          ],
+          "perm_p": 1.9073486328125e-06,
+          "perm_method": "exact_enumeration",
+          "wilcoxon_p_approx_reference": 8.857457687863547e-05,
+          "n_ties_in_abs_diff": 0,
+          "seeds_for_80pct_power": 2,
+          "n_seeds": 20,
+          "perm_p_holm": 7.62939453125e-06,
+          "significant_holm_0.05": true
+        },
+        "gdro": {
+          "mean": 0.8309920495126786,
+          "sd": 0.01830974363897362,
+          "ci95": [
+            0.8234882659510537,
+            0.8390060276229355
+          ],
+          "delta_vs_erm": 0.10979464119195141,
+          "delta_ci95": [
+            0.09698223055722485,
+            0.12316172696879898
+          ],
+          "perm_p": 1.9073486328125e-06,
+          "perm_method": "exact_enumeration",
+          "wilcoxon_p_approx_reference": 8.857457687863547e-05,
+          "n_ties_in_abs_diff": 0,
+          "seeds_for_80pct_power": 2,
+          "n_seeds": 20,
+          "perm_p_holm": 7.62939453125e-06,
+          "significant_holm_0.05": true
+        },
+        "rw": {
+          "mean": 0.8429116673919502,
+          "sd": 0.02260606782497955,
+          "ci95": [
+            0.8332255320471641,
+            0.8523010159147897
+          ],
+          "delta_vs_erm": 0.12171425907122284,
+          "delta_ci95": [
+            0.1076825538263879,
+            0.13514460941763198
+          ],
+          "perm_p": 1.9073486328125e-06,
+          "perm_method": "exact_enumeration",
+          "wilcoxon_p_approx_reference": 8.857457687863547e-05,
+          "n_ties_in_abs_diff": 0,
+          "seeds_for_80pct_power": 2,
+          "n_seeds": 20,
+          "perm_p_holm": 7.62939453125e-06,
+          "significant_holm_0.05": true
+        },
+        "erm": {
+          "mean": 0.7211974083207273,
+          "sd": 0.026151938560211353,
+          "ci95": [
+            0.7099941018919536,
+            0.7324426404459456
+          ],
+          "n_seeds": 20
+        }
+      },
+      "ranking": {
+        "full_sample_order": [
+          "dfr",
+          "rw",
+          "gdro",
+          "adv",
+          "erm"
+        ],
+        "exact_order_survival": 0.9774,
+        "winner_survival": 1.0
+      }
+    }
+  }
+}

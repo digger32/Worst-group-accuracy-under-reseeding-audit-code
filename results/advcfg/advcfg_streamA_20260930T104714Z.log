@@ -1,0 +1,14 @@
+[runner] 5 units | outdir=runs/advcfg/t3 | jobs=1 | no_resume=True | timeout=7200s | mem_avail=29.04 GB
+[ok] celeba__adv__seed0 (2002.4s, rss=1.354 GB, vram=2.97 GB, host_free_min=25.58 GB)
+[ok] celeba__adv__seed1 (1970.4s, rss=1.226 GB, vram=2.97 GB, host_free_min=25.58 GB)
+[ok] celeba__adv__seed2 (1981.4s, rss=1.227 GB, vram=2.97 GB, host_free_min=25.58 GB)
+[ok] celeba__adv__seed3 (1974.4s, rss=1.227 GB, vram=2.97 GB, host_free_min=25.58 GB)
+[ok] celeba__adv__seed4 (1993.4s, rss=1.362 GB, vram=2.97 GB, host_free_min=25.58 GB)
+[runner] done | ok=5 skip=0 fail=0 timeout=0 | host_mem_low_water=25.58 GB
+[runner] 5 units | outdir=runs/advcfg/t4 | jobs=1 | no_resume=True | timeout=7200s | mem_avail=27.85 GB
+[ok] celeba__adv__seed0 (1952.4s, rss=1.227 GB, vram=2.97 GB, host_free_min=26.47 GB)
+[ok] celeba__adv__seed1 (1990.4s, rss=1.138 GB, vram=2.97 GB, host_free_min=26.47 GB)
+[ok] celeba__adv__seed2 (1960.3s, rss=1.224 GB, vram=2.97 GB, host_free_min=26.47 GB)
+[ok] celeba__adv__seed3 (1988.4s, rss=1.228 GB, vram=2.97 GB, host_free_min=25.5 GB)
+[ok] celeba__adv__seed4 (1987.4s, rss=1.363 GB, vram=2.97 GB, host_free_min=25.5 GB)
+[runner] done | ok=5 skip=0 fail=0 timeout=0 | host_mem_low_water=25.5 GB

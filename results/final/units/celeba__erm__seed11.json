@@ -1,0 +1,53 @@
+{
+  "dataset": "celeba",
+  "method": "erm",
+  "seed": 11,
+  "device": "cuda",
+  "backbone": "resnet50",
+  "epochs": 5,
+  "batch_size": 64,
+  "lr": 0.0015,
+  "hyperparams": {
+    "lr": 0.0015,
+    "weight_decay": 0.00022
+  },
+  "hpo_trials": 12,
+  "selection_rule": "val_worst_group_accuracy",
+  "metrics": {
+    "acc_mean": 0.9579200480913737,
+    "acc_worst_group": 0.5111111111111111,
+    "acc_per_group": [
+      0.9537217159823896,
+      0.9921698739216988,
+      0.9028225806451613,
+      0.5111111111111111
+    ],
+    "n_per_group": [
+      9767,
+      7535,
+      2480,
+      180
+    ],
+    "eo_gap": 0.3917114695340502,
+    "acc_balanced_group": 0.8399563204150902
+  },
+  "val_worst_group": 0.4835164835164835,
+  "oom_backoffs": 0,
+  "peak_vram_gb": 2.97,
+  "peak_rss_gb": 1.194,
+  "wall_s": 1789.2,
+  "n_val_selection": 9933,
+  "n_val_dfr": 9934,
+  "val_worst_group_base": 0.4835164835164835,
+  "eval_sha256": "ad92f5ba648eb1c4f370f05d6b48328cc73278247ade1786b09e057a58ddd643",
+  "n_probe": 64,
+  "min_probe_std": 0.700287,
+  "train_sha256": "cef6e5ee3217a79a8a8a0a9cf092efa68297d940fb688a1db79ed814a97f8163",
+  "train_group_hist": [
+    71629,
+    66874,
+    22880,
+    1387
+  ],
+  "n_train": 162770
+}

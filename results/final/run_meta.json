@@ -1,0 +1,43 @@
+{
+  "run_started": "2026-07-31T02:53:12.320673+00:00",
+  "no_resume": true,
+  "n_units": 200,
+  "timeout_s": 7200,
+  "jobs": 2,
+  "config_sha256": "3093fdaa489ef132",
+  "datasets": [
+    "celeba",
+    "waterbirds"
+  ],
+  "methods": [
+    "adv",
+    "dfr",
+    "erm",
+    "gdro",
+    "rw"
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "hpo_trials": 12,
+  "host_mem_available_gb_at_start": 28.7
+}

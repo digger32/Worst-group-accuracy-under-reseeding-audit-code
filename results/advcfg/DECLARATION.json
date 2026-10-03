@@ -1,0 +1,65 @@
+{
+  "written_utc": "2026-09-30T10:47:15.012876+00:00",
+  "question": "does the seed spread of adversarial debiasing on CelebA belong to the method or to the configuration selected at seed 0?",
+  "dataset": "celeba",
+  "method": "adv",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "budget": "full training budget, identical to the reported pass",
+  "frozen": {
+    "lr": 0.00236,
+    "weight_decay": 0.000811,
+    "lambda_adv": 0.113
+  },
+  "configs": {
+    "t3": {
+      "lr": 0.0206,
+      "weight_decay": 0.00108,
+      "lambda_adv": 0.313,
+      "tune_score": 0.3361
+    },
+    "t6": {
+      "lr": 0.000312,
+      "weight_decay": 0.0011,
+      "lambda_adv": 0.299,
+      "tune_score": 0.3187
+    },
+    "t4": {
+      "lr": 0.000997,
+      "weight_decay": 0.000815,
+      "lambda_adv": 0.0115,
+      "tune_score": 0.3187
+    },
+    "t2": {
+      "lr": 0.000298,
+      "weight_decay": 0.000612,
+      "lambda_adv": 0.0221,
+      "tune_score": 0.3077
+    }
+  },
+  "statistic": "standard deviation over the five seeds of test worst-group accuracy",
+  "threshold": 0.1,
+  "rule": {
+    "method": "both configurations with lambda >= 0.1 other than the frozen one (t3, t6) exceed the threshold",
+    "configuration": "neither of them exceeds the threshold",
+    "mixed": "exactly one of them exceeds the threshold"
+  },
+  "threshold_rationale": "0.10 lies at the geometric midpoint between the five-seed standard deviation of the baseline (0.055) and of the frozen configuration (0.190) on seeds 0-4 of the reported pass",
+  "operating_characteristics": {
+    "P(SD5 > 0.10 | sigma = 0.055)": 0.01,
+    "P(SD5 > 0.10 | sigma = 0.190)": 0.893
+  },
+  "result_sentences": {
+    "method": "Both did (standard deviations \\AdvCfgSDThree{} and \\AdvCfgSDSix), while the two configurations with near-zero adversarial weight stayed near the baseline's spread (\\AdvCfgSDTwo{} and \\AdvCfgSDFour), so the fragility belongs to the adversarial regime of the method and not only to the configuration we froze.",
+    "configuration": "Neither did (standard deviations \\AdvCfgSDThree{} and \\AdvCfgSDSix), so the spread reported above belongs to the configuration selected at seed 0, and it was produced by the standard procedure of tuning once and training once.",
+    "mixed": "Exactly one did (standard deviations \\AdvCfgSDThree{} and \\AdvCfgSDSix), so the experiment does not separate the two readings, and we report the attribution as unresolved."
+  },
+  "selection_sentence": "Tuning on each of the five seeds in turn would have selected the frozen configuration on \\AdvCfgFrozenSelected{} of them.",
+  "caveat": "t3 pairs a high adversarial weight with a high learning rate (2.06e-2), so its outcome alone cannot separate the two; t6 pairs a high weight with a low learning rate and is the cleaner test. t2 and t4 have near-zero weight and act as a within-method control.",
+  "sha256_of_body": "02b188a2f6882be9506f118b2794371e647e2bb834acbf620a35b4a14ca69331"
+}
